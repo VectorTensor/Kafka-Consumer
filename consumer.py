@@ -1,5 +1,4 @@
 import os
-from re import PatternError
 from confluent_kafka import Consumer, KafkaError
 from confluent_kafka.admin import AdminClient
 from confluent_kafka.admin import NewTopic
