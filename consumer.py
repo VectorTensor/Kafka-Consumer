@@ -1,4 +1,5 @@
 import os
+from re import PatternError
 from confluent_kafka import Consumer, KafkaError
 from confluent_kafka.admin import AdminClient
 from confluent_kafka.admin import NewTopic
@@ -33,6 +34,7 @@ def ensure_topic_exists(conf, topic_name):
 
 
 def main():
+    print("starting consumer......")
     bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '')
     if bootstrap_servers:
         print(f" bootstrap_servers : {bootstrap_servers}")
