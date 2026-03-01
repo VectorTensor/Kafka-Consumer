@@ -72,7 +72,7 @@ def main():
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
                     logger.info(f"End of partition reached: {
-                                msg.topic()} [{msg.partition()}]")
+                                msg.topic()} {msg.partition()}")
                 else:
                     logger.error(f"Error occurred: {msg.error()}")
             else:
