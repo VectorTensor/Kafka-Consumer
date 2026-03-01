@@ -1,15 +1,7 @@
-import logging
 import os
 from confluent_kafka import Consumer, KafkaError, AdminClient
 from confluent_kafka.admin import NewTopic
 from dotenv import load_dotenv
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger("KafkaConsumer")
 
 load_dotenv("/vault/secrets/config")
 
@@ -20,7 +12,7 @@ def ensure_topic_exists(conf, topic_name):
     try:
         metadata = admin_client.list_topics(timeout=10)
         if topic_name not in metadata.topics:
-            logger.info(f"Topic '{topic_name}' does not exist. Creating it...")
+            print(f"Topic '{topic_name}' does not exist. Creating it...")
             new_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1)
             fs = admin_client.create_topics([new_topic])
             
@@ -28,13 +20,13 @@ def ensure_topic_exists(conf, topic_name):
             for topic, f in fs.items():
                 try:
                     f.result()  # The result itself is None
-                    logger.info(f"Topic '{topic}' created successfully.")
+                    print(f"Topic '{topic}' created successfully.")
                 except Exception as e:
-                    logger.error(f"Failed to create topic '{topic}': {e}")
+                    print(f"Failed to create topic '{topic}': {e}")
         else:
-            logger.info(f"Topic '{topic_name}' already exists.")
+            print(f"Topic '{topic_name}' already exists.")
     except Exception as e:
-        logger.error(f"Error checking/creating topic: {e}")
+        print(f"Error checking/creating topic: {e}")
 
 def main():
     bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
@@ -53,7 +45,7 @@ def main():
 
     try:
         consumer.subscribe([topic])
-        logger.info(f"Subscribed to topic: {topic}")
+        print(f"Subscribed to topic: {topic}")
 
         while True:
             msg = consumer.poll(1.0)
@@ -62,14 +54,14 @@ def main():
                 continue
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
-                    logger.info(f"End of partition reached: {msg.topic()} [{msg.partition()}]")
+                    print(f"End of partition reached: {msg.topic()} [{msg.partition()}]")
                 else:
-                    logger.error(f"Error occurred: {msg.error()}")
+                    print(f"Error occurred: {msg.error()}")
             else:
-                logger.info(f"Received message: {msg.value().decode('utf-8')} from topic: {msg.topic()}")
+                print(f"Received message: {msg.value().decode('utf-8')} from topic: {msg.topic()}")
 
     except KeyboardInterrupt:
-        logger.info("Stopping consumer...")
+        print("Stopping consumer...")
     finally:
         consumer.close()
 
