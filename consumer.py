@@ -42,7 +42,11 @@ def ensure_topic_exists(conf, topic_name):
 
 
 def main():
-    bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+    bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', '')
+    if bootstrap_servers:
+        print(f" bootstrap_servers : {bootstrap_servers}")
+    else:
+        print("env not found")
     conf = {
         'bootstrap.servers': bootstrap_servers,
         'group.id': os.getenv('KAFKA_GROUP_ID', 'python-consumer-group'),
