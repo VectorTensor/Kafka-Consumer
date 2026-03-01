@@ -15,14 +15,8 @@ def ensure_topic_exists(conf, topic_name):
     try:
         metadata = admin_client.list_topics(timeout=10)
         if topic_name not in metadata.topics:
-<<<<<<< HEAD
             print(f"Topic '{topic_name}' does not exist. Creating it...")
             new_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1)
-=======
-            logger.info(f"Topic '{topic_name}' does not exist. Creating it...")
-            new_topic = NewTopic(
-                topic_name, num_partitions=1, replication_factor=1)
->>>>>>> 036c84597087bd6d7df0376b7d9b53b784855ded
             fs = admin_client.create_topics([new_topic])
 
             # Wait for each operation to finish.
@@ -68,21 +62,11 @@ def main():
                 continue
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
-<<<<<<< HEAD
                     print(f"End of partition reached: {msg.topic()} [{msg.partition()}]")
-=======
-                    logger.info(f"End of partition reached: {
-                                msg.topic()} {msg.partition()}")
->>>>>>> 036c84597087bd6d7df0376b7d9b53b784855ded
                 else:
                     print(f"Error occurred: {msg.error()}")
             else:
-<<<<<<< HEAD
                 print(f"Received message: {msg.value().decode('utf-8')} from topic: {msg.topic()}")
-=======
-                logger.info(f"Received message: {msg.value().decode(
-                    'utf-8')} from topic: {msg.topic()}")
->>>>>>> 036c84597087bd6d7df0376b7d9b53b784855ded
 
     except KeyboardInterrupt:
         print("Stopping consumer...")
