@@ -16,7 +16,8 @@ def ensure_topic_exists(conf, topic_name):
         metadata = admin_client.list_topics(timeout=10)
         if topic_name not in metadata.topics:
             print(f"Topic '{topic_name}' does not exist. Creating it...")
-            new_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1)
+            new_topic = NewTopic(
+                topic_name, num_partitions=1, replication_factor=1)
             fs = admin_client.create_topics([new_topic])
 
             # Wait for each operation to finish.
@@ -41,7 +42,7 @@ def main():
         print("env not found")
     conf = {
         'bootstrap.servers': bootstrap_servers,
-        'group.id': os.getenv('KAFKA_GROUP_ID', 'python-consumer-group'),
+        'group.id': os.getenv('KAFKA_GROUP_ID', 'test-consumer-grp'),
         'auto.offset.reset': 'earliest'
     }
 
@@ -63,11 +64,13 @@ def main():
                 continue
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
-                    print(f"End of partition reached: {msg.topic()} [{msg.partition()}]")
+                    print(f"End of partition reached: {
+                          msg.topic()} [{msg.partition()}]")
                 else:
                     print(f"Error occurred: {msg.error()}")
             else:
-                print(f"Received message: {msg.value().decode('utf-8')} from topic: {msg.topic()}")
+                print(f"Received message: {msg.value().decode(
+                    'utf-8')} from topic: {msg.topic()}")
 
     except KeyboardInterrupt:
         print("Stopping consumer...")
